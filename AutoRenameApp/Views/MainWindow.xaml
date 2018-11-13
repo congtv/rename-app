@@ -1,0 +1,167 @@
+﻿<Window x:Class="AutoRenameApp.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:shared="clr-namespace:AutoRenameApp.Shared"
+        Title="MainWindow" 
+        FontFamily="Times New Roman" 
+        Height="500"
+        ResizeMode="CanResize" 
+        Width="800" 
+        SizeToContent="WidthAndHeight" >
+    <Window.Resources>
+        <shared:BooleanToVisibilityConverter x:Key="booleanToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid Margin="10">
+        <ProgressBar 
+            IsIndeterminate="{Binding Path=IsProcess,Mode=TwoWay}" 
+            Visibility="{Binding Path=IsProcess,Mode=TwoWay,Converter={StaticResource booleanToVisibilityConverter}}" 
+            Background="Red"
+            Panel.ZIndex="2"
+            Opacity="0.3" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="5*" />
+                <ColumnDefinition Width="4*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="100" />
+            </Grid.RowDefinitions>
+            <ScrollViewer>
+                <ListView 
+                ItemContainerStyle="{StaticResource ItemContentStyle}" 
+                ItemsSource="{Binding Path=ListRename,Mode=TwoWay}" 
+                SelectionMode="Extended" Style="{DynamicResource ListViewStyle1}">
+                    <ListView.ContextMenu>
+                        <ContextMenu Placement="Mouse" >Remove</ContextMenu>
+                    </ListView.ContextMenu>
+                    <ListView.View>
+                        <GridView>
+                            <GridView.Columns>
+                                <GridViewColumn Width="27">
+                                    <GridViewColumnHeader>
+                                        <StackPanel Orientation="Vertical">
+                                            <CheckBox x:Name="chkAll" Command="{Binding CheckAllCommand}" CommandParameter="{Binding Path=IsChecked, RelativeSource={RelativeSource Mode=Self}}" />
+                                            <TextBlock>All</TextBlock>
+                                        </StackPanel>
+                                    </GridViewColumnHeader>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding Path=IsChecked, Mode=TwoWay}" HorizontalAlignment="Center" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+
+                                <GridViewColumn Width="150" Header=" Đường dẫn " DisplayMemberBinding="{Binding Directory}" />
+
+                                <GridViewColumn Width="75"  Header=" Tên file " DisplayMemberBinding="{Binding FileName}" />
+
+                                <GridViewColumn Width="45" DisplayMemberBinding="{Binding Extension}">
+                                    <GridViewColumnHeader>
+                                        <TextBlock Text=" Phần mở rộng " TextWrapping="Wrap" />
+                                    </GridViewColumnHeader>
+                                </GridViewColumn>
+                            </GridView.Columns>
+                        </GridView>
+                    </ListView.View>
+                    <i:Interaction.Behaviors>
+                        <shared:ListViewDragDropBehavior />
+                    </i:Interaction.Behaviors>
+                </ListView>
+            </ScrollViewer>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition  Width="2*"/>
+                    <ColumnDefinition  Width="5*"/>
+                </Grid.ColumnDefinitions>
+                <Button 
+                    Grid.Row="0" 
+                    Grid.ColumnSpan="2" 
+                    Name="btnOpenDialog" 
+                    Content="Chọn thư mục" 
+                    Command="{Binding OpenDialogCommand}"
+                    Width="80" />
+
+                <RadioButton 
+                    VerticalContentAlignment="Center"
+                    Margin="3 0 0 0"
+                    Grid.Row="1"  
+                    IsChecked="{Binding Path=IsFixExtension, Mode=TwoWay}"
+                    Content="Chọn kiểu" >
+                    <i:Interaction.Behaviors>
+                        <shared:RadioButtonBehavior />
+                    </i:Interaction.Behaviors>
+                </RadioButton>
+                <TextBox 
+                    Grid.Row="1" 
+                    Grid.Column="1" 
+                    Text="{Binding Path=Extension, Mode=TwoWay}" />
+
+                <Label                 
+                    Grid.Row="2" 
+                    Content="Số bắt đầu" />
+                <TextBox 
+                    Grid.Row="2" 
+                    Grid.Column="1"  
+                    Text="{Binding Path=StartNumber, Mode=TwoWay}" />
+
+                <Label Grid.Row="3" Content="Chữ kết thúc" />
+                <TextBox 
+                    Grid.Row="3" 
+                    Grid.Column="1"
+                    Text="{Binding Path=EndText, Mode=TwoWay}" />
+
+
+                <Label 
+                    Grid.Row="5" 
+                    Content="Thư mục xuất" />
+                <StackPanel 
+                    Grid.Row="5" 
+                    Grid.Column="1"
+                    Orientation="Horizontal" >
+
+                    <TextBox Text="{Binding Path=OutputFolder, Mode=TwoWay}" />
+
+                    <Button 
+                        Content="..."
+                        Command="{Binding Path=ChooseOutputCommand}"
+                        Width="25"
+                        Margin="3 0 0 0"
+                        Height="23" />
+                </StackPanel>
+
+                <Label 
+                    Grid.Row="4" 
+                    Content="Chữ bắt đầu" />
+                <TextBox 
+                    Grid.Row="4" 
+                    Grid.Column="1" 
+                    Text="{Binding Path=StartText, Mode=TwoWay}" />
+
+
+                <Button 
+                    Grid.Row="6"
+                    Grid.ColumnSpan="2"
+                    Content="Đổi tên"  
+                    Width="75"
+                    Command="{Binding Path=RenameCommand}" />
+            </Grid>
+            <StackPanel  Grid.Row="1" Grid.ColumnSpan="2" Orientation="Vertical">
+                <Label Width="80" Content="Tiến trình :" BorderThickness="1" />
+                <ListView Height="70">
+
+                </ListView>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>
